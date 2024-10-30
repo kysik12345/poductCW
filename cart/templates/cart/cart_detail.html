@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<table class="cart-table">
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Изоображение</th>
+        <th>Наименование</th>
+        <th>Цена</th>
+        <th>Количество</th>
+        <th>Стоимость</th>
+    </tr>
+    </thead>
+    {% for item in cart %}
+        {% with product=item.product %}
+        <tr>
+            <td>
+                {{ product.id }}
+            </td>
+            <td>
+                {% if product.image %}
+                <img src="{{ product.image.url }}" style="wight:30px; height=30px">
+                {% endif %}
+            </td>
+            <td>
+                {{ product.name }}
+            </td>
+            <td>
+                {{ product.price }}
+            </td>
+            <td>
+                {{ item.quantity }}
+            </td>
+            <td>
+                {{ item.total_price }}
+            </td>
+        </tr>
+    {% endwith %}
+    {% endfor %}
+
+</table>
+<div>
+    <div>Всего товаров: {{ cart|length }} </div>
+    <div>Сумма товаров в корзине: {{ cart.get_total_price }}</div>
+</div>
+<script>
+    function testEvent(event){
+    let targ = event.target.parentElement.parentElement
+    }
+    let testElement = document.querySelectorAll("#prod_quantity")
+    testElement.forEach((item)=>{item.addEventListerner('change', testEvent)})
+
+
+
+
+    function getTotalPriceCart(){
+    let itemPriceInputs = document.querySrlrctorAll("#itemPrice")
+    let totalPrice = 0;
+    itemPriceInputs.forEach((item, index) =>{
+        totalPrice += +item.textContent;
+        });
+    let totalPriceCart = document.querySrlrctor("#totalPriceCart");
+    return totalPrice;
+    }
+
+    function getQuantityIncart(){
+        let cartLengthHeader = document.querySrlrctorAll("#prod_quantity")
+        let allQuantity = 0;
+        quantityInputs/forEach((item,index)=>{
+            allQuantity += +item.value;
+        });
+        let cartLength = document.querySrlrctorAll("#cartLength");
+        cartLength.textContent = allQuantity;
+        cartLengthHeader.textContent = allQuantity;
+        return allQuantity;
+    }
+
+    function updatePrice(event){
+        let quantity = event.target.value;
+        let itemPrice = event.target.parentElement.parentElement.querySelector("itemPrice");
+        let productPrice = event.target.parentElement.parentElement.querySelector("ProductPrice").textContent
+        productPrice = Number(productPrice)
+
+        let newItemPrice = productPrice * quantity;
+        itemPrice.textContent = newItemPrice;
+        getQuantityInCart();
+        getTotalPriceCart();
+    };
+
+    async function saveCartInSession(event){
+        let productId = event.target.parentElement.parentElement.querySelector("productId").value;
+        let quantity = event.target.value;
+
+        let cartInfo = {
+            productIdValue: productId,
+            quantityValue: quantity,
+            totalQuantity: getQuqntityInCart(),
+            totalPrice = getTotalPriceCart(),
+        };
+        let response = await fetch('/cart/update_cart_session/',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json:charset=utf=8'
+            }'
+            body:JSON.stringify(cartInfo),
+            });
+
+
+
+
+
+</script>
+
+{% endblock %}
